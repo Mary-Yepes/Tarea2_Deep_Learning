@@ -1,0 +1,76 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHONHASHSEED: "42"
+  PYTHONPATH: src:.
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12", cache: pip }
+      - name: Dependencias (servicio + desarrollo)
+        run: |
+          pip install -r requirements-serve.lock
+          pip install pytest==8.3.3 pytest-cov==6.0.0 pytest-timeout==2.3.1 httpx==0.27.2 ruff==0.7.2 \
+                      mypy==1.13.0 pandas-stubs types-PyYAML pandera==0.21.0 matplotlib==3.9.2
+          pip install -e . --no-deps
+      - name: 1 · Lint (ruff)
+        run: ruff check src app tests scripts
+      - name: 2 · Tipos (mypy)
+        run: mypy
+      - name: 3 · Pruebas unitarias (RLE, métricas, estadística, fuga, determinismo)
+        run: pytest -m "not slow" --ignore=tests/test_api.py --ignore=tests/test_model_regression.py --ignore=tests/test_data_schema.py --cov --cov-report=xml
+      - name: 4 · Pruebas de datos (pandera)
+        run: pytest tests/test_data_schema.py
+      - name: Modelos de humo (si el repositorio no incluye los registrados)
+        run: test -f models/registry.json || python scripts/train_deployable.py --data synthetic --promote
+      - name: 5 · Regresión de modelo (conjunto dorado, ε declarado)
+        run: pytest tests/test_model_regression.py
+      - name: Esquema de API y timeouts
+        run: pytest tests/test_api.py
+      - uses: actions/upload-artifact@v4
+        with: { name: coverage, path: coverage.xml }
+
+  image:
+    needs: quality
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: Modelos para la imagen
+        run: |
+          pip install -r requirements-serve.lock && pip install -e . --no-deps
+          test -f models/registry.json || python scripts/train_deployable.py --data synthetic --promote
+      - name: 6 · Construcción de imagen
+        run: docker build -t proyecto-integrador:${{ github.sha }} .
+      - name: 7 · Prueba de humo (contenedor + /predict_*)
+        run: bash scripts/smoke_test.sh proyecto-integrador:${{ github.sha }}
+      - name: 8a · Vulnerabilidades de dependencias (pip-audit)
+        run: pip install pip-audit==2.7.3 && pip-audit -r requirements-serve.lock
+      - name: 8b · Vulnerabilidades de la imagen (Trivy)
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: proyecto-integrador:${{ github.sha }}
+          severity: CRITICAL,HIGH
+          exit-code: "1"
+          ignore-unfixed: true
+      - name: Publicar imagen (solo etiquetas v*)
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          docker tag proyecto-integrador:${{ github.sha }} ghcr.io/${{ github.repository }}:${{ github.ref_name }}
+          docker push ghcr.io/${{ github.repository }}:${{ github.ref_name }}

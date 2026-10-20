@@ -1,0 +1,21 @@
+# Pipeline DVC: `dvc repro` reconstruye las salidas pesadas; los datos crudos se versionan con
+# `dvc add data/raw/sartorius data/raw/jarvis` (hashes en data/raw/*.dvc, nunca en Git).
+stages:
+  nlp_prepare:
+    cmd: python scripts/nlp_experiments.py prepare
+    deps: [data/raw/jarvis, scripts/nlp_experiments.py, src/project/text_data.py, configs/nlp.yaml]
+    outs: [data/processed/nlp_splits.csv]
+  seg_split:
+    cmd: python scripts/seg_experiments.py split
+    deps: [data/raw/sartorius/train.csv, src/project/splits.py]
+    outs: [data/processed/seg_splits.csv]
+  seg_train_base:
+    foreach: [0, 1, 2]
+    do:
+      cmd: python scripts/seg_experiments.py train --seed ${item} --tag base
+      deps: [data/processed/seg_splits.csv, src/project/models_seg.py, configs/seg_unetpp.yaml]
+      outs: [models/seg/unetpp_base_f100_s${item}.keras]
+  deployable:
+    cmd: python scripts/train_deployable.py --data real --promote
+    deps: [data/processed/nlp_splits.csv, data/processed/seg_splits.csv]
+    outs: [models/registry.json]

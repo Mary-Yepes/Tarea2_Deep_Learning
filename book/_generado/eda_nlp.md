@@ -1,0 +1,1 @@
+Textos: 1500 originales → 1500 tras eliminar 0 duplicados exactos. Clases: {'class_0': 548, 'class_2': 508, 'class_1': 444}. p95 de tokens = 63 → `max_length` = 64; p95 de palabras = 47 → `sequence_length` = 50.

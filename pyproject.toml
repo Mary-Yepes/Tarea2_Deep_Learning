@@ -1,0 +1,55 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "proyecto-integrador"
+version = "1.0.0"
+description = "Segmentación de instancias celulares y clasificación de texto con validez estadística, robustez y MLOps"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "numpy>=1.26", "scipy>=1.11", "pandas>=2.1", "scikit-learn>=1.4", "scikit-image>=0.22",
+  "opencv-python-headless>=4.8", "matplotlib>=3.8", "pyyaml>=6", "joblib>=1.3",
+]
+
+[project.optional-dependencies]
+serve = ["fastapi>=0.110", "uvicorn[standard]>=0.29", "python-multipart>=0.0.9", "pydantic>=2.6"]
+dl = ["tensorflow>=2.16,<2.21", "torch>=2.2", "transformers>=4.40", "peft>=0.10", "gensim>=4.3", "fasttext-wheel>=0.9.2"]
+seg-external = ["cellpose>=3,<4", "segment-anything @ git+https://github.com/facebookresearch/segment-anything", "torchvision>=0.17", "pycocotools>=2.0", "tifffile>=2024.1"]
+exp = ["xgboost>=2.0", "optuna>=3.6", "statsmodels>=0.14", "scikit-posthocs>=0.9", "shap>=0.45", "pandera>=0.20",
+       "mlflow>=2.12", "dvc>=3.50", "codecarbon>=2.4", "sentence-transformers>=2.7", "onnx>=1.16", "onnxruntime>=1.17",
+       "skl2onnx>=1.16", "tf2onnx>=1.16", "locust>=2.24"]
+dev = ["pytest>=8", "pytest-cov>=5", "pytest-timeout>=2.3", "httpx>=0.27", "ruff>=0.4", "mypy>=1.10",
+       "pandas-stubs", "types-PyYAML", "pip-audit>=2.7", "nbclient>=0.10", "ipykernel>=6.29", "nbformat>=5.10",
+       "jupyter-book>=1.0,<2"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src", "."]
+testpaths = ["tests"]
+addopts = "-q --timeout=300"
+
+[tool.coverage.run]
+source = ["project", "app"]
+omit = ["src/project/transformer_text.py", "src/project/models_seg.py", "src/project/adapters_seg.py"]
+
+[tool.ruff]
+line-length = 140
+target-version = "py311"
+extend-exclude = ["notebooks", "book", "kaggle/src", "kaggle/*.ipynb"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+ignore = ["E702", "E731", "B008", "B023", "B905", "E741"]
+
+[tool.mypy]
+python_version = "3.12"
+ignore_missing_imports = true
+warn_unused_ignores = false
+files = ["src/project", "app"]
+
+[tool.ruff.lint.per-file-ignores]
+"scripts/*" = ["E501"]

@@ -1,0 +1,5 @@
+model: cellpose
+version: "3.x"
+generalist: {model_type: cyto2, diameter: null}
+finetune: {base: cyto2, n_epochs: 500, learning_rate: 0.1, weight_decay: 0.0001}
+human_in_the_loop: "corrección manual de 20 imágenes de validación → reentrenar (flujo Cellpose 2.0)"

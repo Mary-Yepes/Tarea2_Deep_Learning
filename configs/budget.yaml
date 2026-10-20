@@ -1,0 +1,98 @@
+# Presupuesto de cómputo por perfil. El perfil activo se elige con la variable de entorno
+# BUDGET (rapido | completo); por defecto `rapido`. El perfil usado queda pre-registrado en
+# configs/prereg.yaml (presupuesto.perfil) y en cada manifiesto de corrida.
+# Tiempos estimados para una GPU T4/P100 de Kaggle; se registran los reales.
+
+rapido:
+  seg:
+    seeds: [0, 1, 2]                    # >= 3 semillas en modelos pesados (protocolo)
+    hpo_trials: 0                       # igual para TODOS los pesados: config. fija de la literatura/EDA
+    tune_postprocess_on_val: true       # todos ajustan su post-procesamiento en validación (rejilla pequeña)
+    unetpp: {max_epochs: 35, patience: 7, batch_size: 8, crop: 256, base_filters: 32}
+    hovernet: {max_epochs: 35, patience: 7, batch_size: 8, crop: 256, base_filters: 32}
+    maskrcnn: {epochs: 12, patience: 3, lr: 0.0001, batch_size: 2, time_budget_h: 0.6, backbone: swin_t}
+    cellpose: {n_epochs: 100, learning_rate: 0.1, weight_decay: 0.0001}
+    sam: {variants: [zero_shot, box_prompts], checkpoint: vit_b}
+    fractions: [0.10, 0.25, 0.50, 1.00]
+    fraction_models: [unetpp, cellpose]   # brazo «desde cero» vs brazo «preentrenado» (H1)
+    ablation: {max_epochs: 15, patience: 4}
+    ablation_levels:
+      resolution: ["256", native, tiling_256_ov64]
+      augment: [none, geom, geom+photo+elastic]
+      loss: [bce, dice, bce_dice, focal]
+      encoder: [scratch, resnet50_imagenet]
+      normalize: [div255, percentile]
+    loco_seeds: [0]
+    robustness_model: unetpp
+  nlp:
+    seeds: [0, 1, 2, 3, 4]
+    transformer_seeds: [0, 1, 2]
+    k_folds: 5
+    hpo_trials: 15                      # igual para BiLSTM, CNN-1D y XGBoost
+    transformer: {model_name: distilbert-base-uncased, epochs: 3, batch_size: 16, lr: 3.0e-5}
+    keras_max_epochs: 20
+
+completo:
+  seg:
+    seeds: [0, 1, 2]
+    hpo_trials: 30
+    tune_postprocess_on_val: true
+    unetpp: {max_epochs: 100, patience: 10, batch_size: 8, crop: 256, base_filters: 32}
+    hovernet: {max_epochs: 100, patience: 10, batch_size: 8, crop: 256, base_filters: 32}
+    maskrcnn: {epochs: 36, patience: 6, lr: 0.0001, batch_size: 2, time_budget_h: 3.0, backbone: swin_t}
+    cellpose: {n_epochs: 500, learning_rate: 0.1, weight_decay: 0.0001}
+    sam: {variants: [zero_shot, box_prompts], checkpoint: vit_b}
+    fractions: [0.10, 0.25, 0.50, 1.00]
+    fraction_models: [unetpp, cellpose]
+    ablation: {max_epochs: 40, patience: 8}
+    ablation_levels:
+      resolution: ["256", "512", native, tiling_256_ov64]
+      augment: [none, geom, geom+photo, geom+photo+elastic]
+      loss: [bce, dice, bce_dice, tversky, focal]
+      encoder: [scratch, resnet50_imagenet]
+      normalize: [div255, percentile]
+    loco_seeds: [0, 1, 2]
+    robustness_model: unetpp
+  nlp:
+    seeds: [0, 1, 2, 3, 4]
+    transformer_seeds: [0, 1, 2, 3, 4]
+    k_folds: 5
+    hpo_trials: 30
+    transformer: {model_name: distilbert-base-uncased, epochs: 4, batch_size: 16, lr: 3.0e-5}
+    keras_max_epochs: 50
+
+# Perfil para entregar el MISMO DÍA: 1 semilla en segmentación, pocas épocas, ablaciones mínimas.
+# Estimación (T4/P100; mis estimaciones, NO medidas): seg ≈ 1.5–2.5 h en total, NLP ≈ 0.5–1.5 h.
+# Los resultados son preliminares: con 1 semilla no hay IC entre semillas y H1/ablaciones tienen poca potencia.
+urgente:
+  seg:
+    seeds: [0]
+    hpo_trials: 0
+    tune_postprocess_on_val: true
+    unetpp: {max_epochs: 12, patience: 4, batch_size: 8, crop: 256, base_filters: 32}
+    hovernet: {max_epochs: 12, patience: 4, batch_size: 8, crop: 256, base_filters: 32}
+    maskrcnn: {epochs: 4, patience: 2, lr: 0.0001, batch_size: 2, time_budget_h: 0.25, backbone: swin_t}
+    cellpose: {n_epochs: 30, learning_rate: 0.1, weight_decay: 0.0001}
+    sam: {variants: [zero_shot, box_prompts], checkpoint: vit_b}
+    fractions: [0.25, 1.00]
+    fraction_models: [unetpp, cellpose]
+    ablation: {max_epochs: 6, patience: 3}
+    ablation_levels:
+      loss: [bce, bce_dice]
+      encoder: [scratch, resnet50_imagenet]
+      augment: [none, geom+photo+elastic]
+    loco_seeds: [0]
+    robustness_model: unetpp
+    robustness_severities: [0, 3, 5]      # ahorra ~1 h de GPU; 3 niveles bastan para la curva de degradación
+    robustness_tta_severities: [3]
+  nlp:
+    seeds: [0, 1, 2]
+    transformer_seeds: [0]
+    k_folds: 5
+    hpo_trials: 5
+    transformer: {model_name: distilbert-base-uncased, epochs: 4, batch_size: 16, lr: 5.0e-5, max_length: 256}
+    transformer_fractions: [0.25, 1.00]
+    keras_max_epochs: 15
+
+# Modo humo (SMOKE=1): todo con 1 semilla, 1–2 épocas y pocas imágenes/textos, para detectar errores
+# en minutos antes de lanzar la corrida larga. Sus salidas van a reports/smoke/ y no se usan.

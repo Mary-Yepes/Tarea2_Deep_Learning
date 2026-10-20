@@ -1,0 +1,16 @@
+seed: 42
+seeds_eval: [0, 1, 2, 3, 4]
+seeds_heavy: [0, 1, 2]
+alpha: 0.05
+n_boot: 10000
+val_frac: 0.15
+test_frac: 0.15
+k_folds: 5
+data_dir: data
+out_dir: reports
+paths:
+  sartorius_csv: data/raw/sartorius/train.csv
+  sartorius_img: data/raw/sartorius/train
+  livecell: data/raw/sartorius/LIVECell_dataset_2021
+  jarvis_csv: data/raw/jarvis/train.csv
+  splits: data/processed/splits

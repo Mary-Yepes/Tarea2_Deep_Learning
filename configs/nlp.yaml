@@ -1,0 +1,22 @@
+text_col: Resume_str   # Resume.csv trae también Resume_html (HTML crudo): NO usar, sus primeros tokens son plantilla
+label_col: Category    # null = autodetección (confirmar y registrar en la datasheet)
+dedup: {jaccard_threshold: 0.8, shingle_k: 5, num_perm: 128, bands: 32}
+preprocess_by_family:
+  transformer: [minimal]
+  classic: [minimal, standard, aggressive]
+  neural: [minimal, standard, aggressive]
+models:
+  majority: {}
+  tfidf_lr: {C: [0.25, 1, 4, 16], ngram: [[1, 1], [1, 2]]}
+  nbsvm: {C: [1, 4], alpha: [1.0]}
+  tfidf_xgboost: {space: XGB_SPACE, n_trials: 30}
+  fasttext: {lr: [0.1, 0.5, 1.0], epoch: [10, 25, 50], wordNgrams: [1, 2, 3], dim: [50, 100]}
+  cnn1d: {kernel_sizes: [2, 3, 4, 5], filters: 100, dropout: 0.5, embedding: [skipgram, fasttext, random]}
+  bilstm: {space: BILSTM_SPACE, n_trials: 30, pooling: [last, max, attention]}
+  transformer:
+    model_name: [distilbert-base-uncased, roberta-base]
+    max_length: 256     # p95 de tokens del EDA (actualizar)
+    lr: 3.0e-5
+    llrd: 0.9
+    epochs: 4
+    seeds: [0, 1, 2, 3, 4]

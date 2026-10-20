@@ -1,0 +1,16 @@
+data/raw/
+data/processed/
+models/seg/
+models/external/
+mlruns/
+reports/demo/
+reports/manifests/
+reports/runs.jsonl
+book/_build/
+__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+coverage.xml
+.ipynb_checkpoints/

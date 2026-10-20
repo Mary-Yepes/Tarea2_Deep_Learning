@@ -1,0 +1,4 @@
+model: hovernet
+branches: [np, hv]              # sin rama de tipo
+loss: {np: bce+dice, hv: mse+msge}
+post: {fg_thr: 0.5, k: 0.4, sobel_ksize: 11, min_size: 10}   # sobel_ksize ajustado en validación

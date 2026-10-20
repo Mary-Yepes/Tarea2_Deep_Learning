@@ -1,0 +1,9 @@
+data/
+reports/
+notebooks/
+book/
+.git/
+**/__pycache__/
+*.ipynb
+models/seg/
+models/external/

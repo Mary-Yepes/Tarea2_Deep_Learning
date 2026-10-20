@@ -1,0 +1,21 @@
+title: "Segmentación de instancias celulares y clasificación de texto: una investigación empírica con validez estadística"
+author: "Autor/a del proyecto — Ciencia de Datos"
+copyright: "2026"
+logo: ""
+only_build_toc_files: true
+execute:
+  execute_notebooks: "off"      # los notebooks se ejecutan con `make notebooks` (de arriba abajo) antes de construir
+parse:
+  myst_enable_extensions: [dollarmath, amsmath, colon_fence, deflist, html_image]
+latex:
+  latex_documents:
+    targetname: proyecto_integrador.tex
+html:
+  use_repository_button: false
+  use_issues_button: false
+sphinx:
+  config:
+    language: es
+    mathjax3_config:
+      tex:
+        macros: {"argmax": "\\operatorname{arg\\,max}"}

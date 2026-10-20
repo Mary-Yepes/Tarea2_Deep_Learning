@@ -1,0 +1,12 @@
+model: unetpp
+arch: {base_filters: 32, depth: 4, deep_supervision: true, dropout: 0.1, encoder: scratch}
+train: {loss: bce_dice, lr: 0.001, batch_size: 8, crop: 256, max_epochs: 100, patience: 10,
+        optimizer: adam, scheduler: cosine, augment: geom+photo+elastic, normalize: percentile}
+post: {fg_thr: 0.5, h: 0.1, min_size: 15}
+hpo: {n_trials: 30, space: UNETPP_SPACE}
+ablations:
+  resolution: [256, 512, native_pad32, tiling_256_ov64]
+  augment: [none, geom, geom+photo, geom+photo+elastic]
+  loss: [bce, dice, bce_dice, tversky, focal]
+  pretraining: [scratch, resnet50_imagenet, livecell]
+  fraction: [0.10, 0.25, 0.50, 1.00]

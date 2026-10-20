@@ -1,0 +1,8 @@
+window: 200
+psi_threshold: 0.2
+ks_alpha: 0.01
+patience: [1, 2]
+severities: [0, 1, 2, 3, 4, 5]
+replicates: 200
+text_drift: [vocabulario, longitud, tema]
+image_drift: [blur, noise, illumination, tipo_celular]

@@ -1,0 +1,32 @@
+{
+  "text": {
+    "production": "text_tfidf_lr-1.0.0",
+    "staging": null,
+    "history": [
+      {
+        "stage": "staging",
+        "name": "text_tfidf_lr-1.0.0"
+      },
+      {
+        "stage": "production",
+        "name": "text_tfidf_lr-1.0.0",
+        "previous": null
+      }
+    ]
+  },
+  "image": {
+    "production": "image_classical-1.0.0",
+    "staging": null,
+    "history": [
+      {
+        "stage": "staging",
+        "name": "image_classical-1.0.0"
+      },
+      {
+        "stage": "production",
+        "name": "image_classical-1.0.0",
+        "previous": null
+      }
+    ]
+  }
+}

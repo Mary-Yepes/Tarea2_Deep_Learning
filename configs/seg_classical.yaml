@@ -1,0 +1,6 @@
+model: classical
+params: {method: otsu, bg_size: 31, smooth: 1.0, min_distance: 4, min_size: 15}
+tune_on_val:
+  method: [otsu, adaptive]
+  min_distance: [3, 4, 6, 8]
+  bg_size: [21, 31, 51]

@@ -1,0 +1,7 @@
+model: maskrcnn
+implementation: mmdet            # mmdet (Swin-T) | torchvision (ResNet50-FPN v2, desviación declarada)
+mmdet_config: mask-rcnn_swin-t-p4-w7_fpn_1x_coco
+anchors_from_eda: {sizes: [8, 16, 32, 64, 128], ratios: [0.5, 1.0, 2.0]}   # actualizar con cuantiles de área del EDA
+nms: {type: soft_nms, iou: 0.5}
+max_per_img: 600                # ~1.2 × p99 del conteo por imagen (EDA)
+train: {lr: 0.0001, batch_size: 2, max_epochs: 36, scheduler: cosine, warmup_iters: 500}

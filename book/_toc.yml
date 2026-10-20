@@ -1,0 +1,35 @@
+format: jb-book
+root: intro
+parts:
+  - caption: Artículo
+    chapters:
+      - file: introduccion
+      - file: datos
+      - file: metodos
+      - file: fundamentos_teoricos
+      - file: resultados_segmentacion
+        sections:
+          - file: resultados/01_seg_eda_audit
+          - file: resultados/02_seg_models_eval
+          - file: resultados/03_seg_robustness_ablations
+      - file: resultados_nlp
+        sections:
+          - file: resultados/04_nlp_eda_audit
+          - file: resultados/05_nlp_models_eval
+          - file: resultados/06_nlp_robustness_fairness
+      - file: mlops
+        sections:
+          - file: resultados/07_drift_simulation
+      - file: discusion
+      - file: conclusiones
+      - file: referencias
+  - caption: Anexos
+    chapters:
+      - file: anexos/preregistro
+        sections:
+          - file: resultados/00_prereg_protocol
+      - file: anexos/revision_por_pares
+      - file: anexos/reproducibilidad
+      - file: anexos/model_cards
+      - file: anexos/datasheets
+      - file: anexos/declaracion_ia
