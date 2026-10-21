@@ -5,7 +5,8 @@ El enunciado (sección «Restricciones») exige declarar de forma transparente e
 corrección de todo lo entregado.
 
 **Asistente:** Claude (Anthropic), usado en octubre de 2026 a través de la aplicación Claude.
-**Autor/a:** *[tu nombre]*. **Revisión humana realizada por:** *[nombre(s)]*, *[fechas]*.
+**Autoras:** Daniela Hernández, Alejandra Meneses Gómez y Mariangel Yepes.    
+**Revisión humana:** las tres autoras, 19–20 de octubre de 2026 (ejecución de los notebooks en Kaggle, lectura de los registros y de las tablas de resultados; ver el alcance exacto más abajo).
 
 | Qué generó el asistente | Dónde | Cómo se verificó |
 |---|---|---|
