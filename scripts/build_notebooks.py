@@ -61,7 +61,7 @@ def make_nb(cells: list[dict]) -> dict:
     return {"cells": cells, "metadata": {
         "kernelspec": {"display_name": "Python 3", "language": "python", "name": "python3"},
         "language_info": {"name": "python", "version": sys.version.split()[0]}},
-        "nbformat": 4, "nbformat_minor": 5}
+        "nbformat": 4, "nbformat_minor": 4}
 
 
 def execute_fallback(nb: dict, cwd: Path) -> dict:
@@ -136,9 +136,17 @@ def main() -> None:
                 import nbformat
                 from nbclient import NotebookClient
 
+                for c in nb["cells"]:                       # nbclient exige `source` como str (make_nb lo guarda como lista de líneas)
+                    if isinstance(c.get("source"), list):
+                        c["source"] = "".join(c["source"])
                 node = nbformat.from_dict(nb)
-                NotebookClient(node, timeout=3600, kernel_name="python3",
+                # allow_errors: una celda que falla no aborta los demás notebooks; el error queda visible en su salida.
+                NotebookClient(node, timeout=3600, kernel_name="python3", allow_errors=True,
                                resources={"metadata": {"path": str(ROOT / "notebooks")}}).execute()
+                for i, c in enumerate(node["cells"]):          # ERRORES_CELDAS
+                    for o in c.get("outputs", []):
+                        if o.get("output_type") == "error":
+                            print(f"!! {s.name}: celda {i} con error {o.get('ename')}: {str(o.get('evalue'))[:200]}", flush=True)
                 nb = node
         out.write_text(json.dumps(nb, indent=1, ensure_ascii=False), encoding="utf-8")
         print("escrito", out)

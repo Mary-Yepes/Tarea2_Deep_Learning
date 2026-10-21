@@ -47,8 +47,7 @@ La validación usa Pydantic. Hay `x-request-id` de extremo a extremo, *logging* 
 
 `scripts/load_test.py` (asíncrono con httpx; alternativa: `scripts/locustfile.py`) mide p50, p95 y p99,
 throughput y tasa de error para concurrencias de 1 a 32 en ambos endpoints, y detecta el **punto de
-saturación**: el primer nivel en que el throughput crece menos del 10 % o la p95 se duplica. *[completar
-con `reports/tables/load_test.json`]*.
+saturación**: el primer nivel en que el throughput crece menos del 10 % o la p95 se duplica. En esta entrega **no se ejecutó** la prueba de carga (no se generó `reports/tables/load_test.json`); queda como trabajo pendiente.
 
 ## Monitoreo implementado (simulación)
 

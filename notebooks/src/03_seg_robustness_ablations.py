@@ -60,8 +60,8 @@ if AB.exists():
             fit = smf.mixedlm("ap ~ C(nivel)", g.groupby(["nivel", "id_imagen"], as_index=False).ap.mean(),
                               groups=g.groupby(["nivel", "id_imagen"], as_index=False).ap.mean().id_imagen).fit()
             print(fit.summary().tables[1].round(4))
-        except ImportError:
-            pass
+        except Exception as e:
+            print('modelo mixto no disponible:', type(e).__name__, e)
     # Interacción resolución × normalización (si se corrió el diseño factorial completo)
 else:
     print("Pendiente: `python scripts/seg_experiments.py ablations --seeds 0 1 2`.")

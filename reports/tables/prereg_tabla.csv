@@ -7,5 +7,5 @@ Diseño de particiones,"70/15/15 (train/val/test) por grupo sample_id con Strati
 Pruebas estadísticas,"α = 0.05, corrección holm; Friedman + Wilcoxon por pares con Holm + diagrama de diferencia crítica (Nemenyi)"
 Efecto mínimo relevante (δ),AP: 0.02; F1: 0.02; ECE: 0.01
 Semillas,"ligeros [0, 1, 2, 3, 4], pesados [0, 1, 2]"
-Presupuesto,"30 trials HPO por modelo; horas-GPU {'segmentacion_pesados': 6, 'nlp_transformer': 2}"
-Criterios de parada,"segmentacion: early stopping sobre pérdida de validación, paciencia 10 épocas, máximo 100; nlp_keras: early stopping sobre pérdida de validación, paciencia 3 épocas, máximo 20/50 (rejilla); transformer: paciencia 2 épocas, máximo 4; xgboost: early_stopping_rounds = 30 sobre validación"
+Presupuesto,"{'segmentacion_pesados': 0, 'nlp_modelos_comparables': 15, 'transformer': 0} trials HPO por modelo; horas-GPU {'segmentacion_pesados': '≈ 0.3–0.6 por semilla (máximo de épocas fijo: 35 Keras, 12 Mask R-CNN; tope de 0.6 h en Mask R-CNN)', 'nlp_transformer': '≈ 3 épocas por ajuste'}"
+Criterios de parada,"segmentacion: early stopping sobre pérdida de validación, paciencia 7 épocas, máximo 35 (Keras); Mask R-CNN: AP de validación, paciencia 3, máximo 12; nlp_keras: early stopping sobre pérdida de validación, paciencia 3 épocas, máximo 20; transformer: paciencia 2 épocas, máximo 3; xgboost: early_stopping_rounds = 30 sobre validación"

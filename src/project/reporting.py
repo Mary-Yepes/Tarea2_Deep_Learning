@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 from scipy import stats
 
-from .stats import bootstrap_ci, compare_models, fmt_ci, hierarchical_bootstrap_ci, paired_test
+from .stats import bootstrap_ci, cliffs_magnitude, compare_models, fmt_ci, hierarchical_bootstrap_ci, paired_test
 
 _trapz = getattr(np, "trapezoid", None) or np.trapz  # numpy < 2 no tiene trapezoid
 
@@ -45,7 +45,14 @@ def pairwise_report(df: pd.DataFrame, metric: str, model: str = "modelo", unit: 
     if piv.shape[1] >= 3:
         return compare_models(piv, alpha, delta)
     a, b = piv.columns[:2]
-    return {"pairwise": pd.DataFrame([dict(A=a, B=b, **paired_test(piv[a], piv[b]))])}
+    t = paired_test(piv[a], piv[b])
+    row = dict(A=a, B=b, **t)
+    # Mismas columnas que `compare_models` (con 2 modelos no hay corrección de Holm: p_holm = p).
+    row.update(p_raw=t["p_wilcoxon"], p_holm=t["p_wilcoxon"], reject=t["p_wilcoxon"] < alpha,
+               cliffs_mag=cliffs_magnitude(t["cliffs_delta"]))
+    if delta is not None:
+        row["practically_relevant"] = abs(t["mean_diff"]) >= delta
+    return {"pairwise": pd.DataFrame([row]), "n": len(piv)}
 
 
 def stratified(df: pd.DataFrame, metric: str, by: str, model: str = "modelo") -> pd.DataFrame:

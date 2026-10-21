@@ -12,6 +12,13 @@
   válida ante deriva de vocabulario o de temas, cambios en la proporción de clases o evidencia de
   disparidad entre subgrupos.
 
+**Con las cifras de esta corrida (perfil «urgente», preliminares).** En imágenes, el candidato es Cellpose
+ajustado (AP 0.236, primero en los tres tipos celulares), con la condición de reajustarlo si cambia el tipo
+celular o el desenfoque. En texto, TF-IDF + XGBoost es la opción razonable: DistilBERT lo iguala en F1
+(0.712 frente a 0.708) sin una ventaja demostrada (H4 no concluyente) y cuesta unas 5.7 veces más por
+texto. No se evaluó la equidad por subgrupos con datos suficientes, por lo que el uso en selección de
+personal solo sería de apoyo con supervisión humana.
+
 ## Hipótesis
 
 Veredictos calculados automáticamente con los criterios pre-registrados (`scripts/fill_report.py`):
@@ -19,7 +26,14 @@ Veredictos calculados automáticamente con los criterios pre-registrados (`scrip
 ```{include} _generado/hipotesis.md
 ```
 
-**Resultado más inesperado:** *[completar]*.
+**Resultado más inesperado:** la curva de aprendizaje de U-Net++ no fue gradual. Con el 25 % de las
+imágenes de entrenamiento el AP fue ≈ 0,001 y con el 100 %, ≈ 0,16 (`seg_fractions.csv`). Lo esperado era
+una mejora suave. Es probable que sea un efecto del presupuesto corto (12 épocas como máximo) y no de la
+cantidad de datos: con pocas imágenes no se alcanzó a converger, y en el entrenamiento con todas las imágenes la pérdida de
+validación seguía bajando en la última época. Por eso no se interpreta como un efecto de los datos, sino como una limitación del perfil
+«urgente». En NLP hubo otra sorpresa: TF-IDF + XGBoost y la CNN-1D superaron a TF-IDF + LR en la búsqueda de
+hiperparámetros, lo contrario de lo que se espera de un clasificador lineal sobre texto. Se verificó con
+una sola semilla, así que queda como hipótesis y no como conclusión.
 
 ## Principales amenazas a la validez y experimentos que las reducirían
 

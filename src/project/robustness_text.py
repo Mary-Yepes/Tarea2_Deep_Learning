@@ -33,6 +33,7 @@ def perturb_synonyms(t: str) -> str:
 
 def mask_tokens(t: str, tokens: set[str], mask: str = "") -> str:
     """Elimina/enmascara palabras o plantillas sospechosas de atajo."""
+    tokens = {str(w) for w in tokens if str(w)}
     pat = r"\b(" + "|".join(map(re.escape, sorted(tokens, key=len, reverse=True))) + r")\b"
     return re.sub(r"\s+", " ", re.sub(pat, mask, t, flags=re.I)).strip() if tokens else t
 

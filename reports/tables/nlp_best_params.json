@@ -1,0 +1,37 @@
+{
+  "tfidf_lr": {
+    "C": 2.5299019373302154,
+    "ngram": "1-1"
+  },
+  "xgb": {
+    "max_depth": 7,
+    "learning_rate": 0.11387317092169064,
+    "subsample": 0.801381688035822,
+    "colsample_bytree": 0.6359065463975175,
+    "min_child_weight": 3.55784973453697,
+    "reg_lambda": 0.3833332156156664
+  },
+  "fasttext": {
+    "lr": 0.2858579877336973,
+    "epoch": 100,
+    "wordNgrams": 2,
+    "dim": 50
+  },
+  "cnn1d": {
+    "learning_rate": 0.001,
+    "batch_size": 32,
+    "sequence_length": 512,
+    "embedding_dim": 100,
+    "embedding": "skipgram"
+  },
+  "bilstm": {
+    "lstm_units": 64,
+    "num_lstm_layers": 1,
+    "dropout_rate": 0.3,
+    "learning_rate": 0.003,
+    "batch_size": 64,
+    "sequence_length": 256,
+    "max_epochs": 20,
+    "embedding_dim": 100
+  }
+}

@@ -14,3 +14,4 @@ __pycache__/
 .ruff_cache/
 coverage.xml
 .ipynb_checkpoints/
+models/*-1.1.0/

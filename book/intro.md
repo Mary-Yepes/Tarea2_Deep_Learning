@@ -24,17 +24,17 @@ capacidad de detectar deriva se mide experimentalmente (RQ8).
 **Resultados.** Los fundamentos teóricos (cap. {doc}`fundamentos_teoricos`) se demuestran y verifican
 numéricamente. Entre otras cosas, se muestra que el ranking por Dice medio puede invertir el ranking por
 IoU medio, que la validación no anidada infla la exactitud estimada (≈ 0.07 en un escenario sin señal) y
-que la temperatura no altera la exactitud pero sí la NLL. Las cifras empíricas de los modelos se generan
-con `make reproduce` sobre los datos reales.
+que la temperatura no altera la exactitud pero sí la NLL. Las cifras empíricas de los modelos se generaron
+sobre los datos reales en Kaggle con los notebooks de `kaggle/`.
 
 ```{admonition} Estado de los resultados empíricos
 :class: warning
-Este libro se construye a partir de los notebooks ejecutados. Mientras los datos de Kaggle no estén en
-`data/raw/` y los modelos no se hayan entrenado (GPU), cada notebook corre en **modo demo** con datos
-sintéticos y lo indica explícitamente. **Las cifras del modo demo validan el código; no son resultados
-del proyecto y no deben reportarse.** Los capítulos de resultados y discusión contienen el análisis y
-los criterios de decisión ya fijados. Las frases marcadas como *[completar con resultados]* se
-reemplazan después de ejecutar `make reproduce`.
+Las cifras de este libro vienen de una **corrida real en Kaggle** (datos de Sartorius y Jarvis) con el
+perfil de presupuesto «urgente», declarado en `configs/prereg.yaml`: una semilla en segmentación,
+entrenamientos cortos y menos niveles de ablación. Por eso los resultados son **preliminares**: las
+diferencias pequeñas no se deben tomar como efectos establecidos. Mask R-CNN recibió una sola época y
+FastText quedó entrenado de menos; ambos casos se declaran en la discusión. El modo demo con datos
+sintéticos solo valida el código y no se reporta.
 ```
 
 **Guía de lectura.** {doc}`introduccion` (objetivos, preguntas e hipótesis) → {doc}`datos` (fichas y
